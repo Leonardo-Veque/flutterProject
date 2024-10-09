@@ -16,11 +16,17 @@ class _LoginPageState extends State {
   Future<void> _login() async{
     final String url = 'http://127.0.0.1:8000/login';
 
+    if(_loginController.text.isEmpty || _senhaController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, preencha todos os campos')),
+      );
+    }
+
     final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type':'application/json'},
     body: json.encode({
-      'usuario': _loginController.text,
+      'email': _loginController.text,
       'password': _senhaController.text,
     }),
     );
@@ -80,6 +86,7 @@ class _LoginPageState extends State {
                   ),
                   SizedBox(height: 70.0),
                   TextField(
+                    controller: _loginController,
                     decoration: InputDecoration(
                       labelText: 'Login',
                       border: OutlineInputBorder(
@@ -91,6 +98,7 @@ class _LoginPageState extends State {
                   ),
                   SizedBox(height: 16.0),
                   TextField(
+                    controller: _senhaController,
                     decoration: InputDecoration(
                       labelText: 'Senha',
                       border: OutlineInputBorder(
@@ -124,7 +132,7 @@ class _LoginPageState extends State {
                   SizedBox(height: 80.0),
                   Text(
                     'Esqueceu a senha clique aqui',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 15),
                   )
                 ],
               ),
