@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart ';
+import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -26,64 +26,95 @@ class Home extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          // Usar Column para múltiplos filhos
-          mainAxisSize:
-              MainAxisSize.min, // Ajusta o tamanho do Column para o conteúdo
+          mainAxisSize: MainAxisSize.min, // Ajusta o tamanho do Column para o conteúdo
           children: [
-            Container(
-              padding: EdgeInsets.all(16.0),
-              height: 200,
-              width: 260,
-              decoration: BoxDecoration(
-                color: Color(0xFC7FC8F8),
-                borderRadius: BorderRadius.all(Radius.circular(40.0)),
-              ),
-              child: Column(
-                children: [
-                  Image.asset(""),
-                  Text(
-                    "Testes",
-                    style: TextStyle(fontSize: 24),
-                  ),
-                ],
+            SizedBox(height: 20), // Espaço entre os containers
+
+            // TODO pagiina de testes
+            InkWell(
+              /*onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TestPage()), // Navega para a página TestPage
+                );
+              },*/
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                height: 200,
+                width: 260,
+                decoration: BoxDecoration(
+                  color: Color(0xFC7FC8F8),
+                  borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                ),
+                child: Column(
+                  children: [
+                    Image.asset("assets/imagens/lista.png", scale: 1.05),
+                    Text(
+                      "Testes",
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ],
+                ),
               ),
             ),
+
             SizedBox(height: 20), // Espaço entre os containers
-            Container(
-              padding: EdgeInsets.all(16.0),
-              height: 200,
-              width: 260,
-              decoration: BoxDecoration(
-                color: Color(0xFC7FC8F8),
-                borderRadius: BorderRadius.all(Radius.circular(40.0)),
-              ),
-              child: Column(
-                children: [
-                  Image.asset(""),
-                  Text(
-                    "Gráficos",
-                    style: TextStyle(fontSize: 24),
-                  ),
-                ],
+
+            // TODO pagina de graficos
+            InkWell(
+              /*onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GraphPage()), // Navega para a página GraphPage
+                );
+              },*/
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                height: 200,
+                width: 260,
+                decoration: BoxDecoration(
+                  color: Color(0xFC7FC8F8),
+                  borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                ),
+                child: Column(
+                  children: [
+                    Image.asset("assets/imagens/grafico.png"),
+                    Text(
+                      "Gráficos",
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ],
+                ),
               ),
             ),
+
             SizedBox(height: 20), // Espaço entre os containers
-            Container(
-              padding: EdgeInsets.all(16.0),
-              height: 200,
-              width: 260,
-              decoration: BoxDecoration(
-                color: Color(0xFC7FC8F8),
-                borderRadius: BorderRadius.all(Radius.circular(40.0)),
-              ),
-              child: Column(
-                children: [
-                  Image.asset(""),
-                  Text(
-                    "Clientes",
-                    style: TextStyle(fontSize: 24),
-                  ),
-                ],
+
+            // TODO pagina de clientes
+            InkWell(
+              /*onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ClientsPage()), // Navega para a página ClientsPage
+                );
+              },*/
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                height: 200,
+                width: 260,
+                decoration: BoxDecoration(
+                  color: Color(0xFC7FC8F8),
+                  borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                ),
+                child: Column(
+                  children: [
+                    Image.asset("assets/imagens/clientesOut.png"),
+                    Text(
+                      "Clientes",
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
