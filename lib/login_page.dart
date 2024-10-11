@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart ';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -7,40 +7,73 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-
-
-class _LoginPageState extends State {
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
 
-  Future<void> _login() async{
-    final String url = 'http://127.0.0.1:8000/login';
+  Future<void> login() async {
+    try {
+      final String baseUrl = 'http://:8000';  // Substitua pelo seu IP real
+// Usando localhost para a web
+      
+      // Primeira requisição para pegar o token CSRF
+      final csrfResponse = await http.get(Uri.parse('$baseUrl/sanctum/csrf-cookie'));
+      print('Status da requisição CSRF: ${csrfResponse.statusCode}'); // Log do status
 
-    if(_loginController.text.isEmpty || _senhaController.text.isEmpty){
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, preencha todos os campos')),
-      );
-    }
+      if (csrfResponse.statusCode == 200) {
+        // Extrair o token CSRF
+        String? csrfToken = extractCsrfToken(csrfResponse);
+        print('Token CSRF extraído: $csrfToken');
 
-    final response = await http.post(
-    Uri.parse(url),
-    headers: {'Content-Type':'application/json'},
-    body: json.encode({
-      'email': _loginController.text,
-      'password': _senhaController.text,
-    }),
-    );
-    if(response.statusCode == 200){
-      final data = json.decode(response.body);
-      String usuario = data['user'];
+        if (csrfToken != null) {
+          // Pega os valores dos TextFields
+          String login = _loginController.text;
+          String senha = _senhaController.text;
 
-      print('Login bem-sucedido: $usuario');
-    }else{
-       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao conectar com a API.')));
+          print('Login: $login, Senha: $senha');
+
+          // Fazer a requisição principal
+          final response = await http.post(
+            Uri.parse('$baseUrl/login'),
+            headers: {
+              'X-XSRF-TOKEN': csrfToken,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'login': login,
+              'senha': senha,
+            }),
+          );
+
+          print('Status da resposta do login: ${response.statusCode}');
+          print('Corpo da resposta do login: ${response.body}');
+
+          if (response.statusCode == 200) {
+            print('Requisição principal bem-sucedida: ${response.body}');
+          } else {
+            print('Erro na requisição principal: ${response.statusCode}');
+          }
+        } else {
+          print('Token CSRF não encontrado.');
+        }
+      } else {
+        print('Erro ao obter o token CSRF: ${csrfResponse.statusCode}');
+        print('Resposta CSRF: ${csrfResponse.body}');
+      }
+    } catch (e) {
+      print('Ocorreu um erro: $e'); // Log do erro
     }
   }
-  
+
+  // Função para extrair o token CSRF dos cookies ou da resposta
+  String? extractCsrfToken(http.Response response) {
+    final cookies = response.headers['set-cookie'];
+    if (cookies != null && cookies.contains('XSRF-TOKEN')) {
+      final token = RegExp(r'XSRF-TOKEN=([^;]+)').firstMatch(cookies);
+      return token?.group(1);
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +84,8 @@ class _LoginPageState extends State {
           child: AppBar(
             backgroundColor: Color(0xFC7FC8F8), // Cor de fundo da AppBar
             flexibleSpace: Center(
-              // Centraliza todo o conteúdo da AppBar
               child: Column(
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // Centraliza verticalmente
+                mainAxisAlignment: MainAxisAlignment.center, // Centraliza verticalmente
                 children: [
                   Image.asset(
                     'assets/imagens/logo4aba.png',
@@ -75,8 +106,7 @@ class _LoginPageState extends State {
             ),
             padding: EdgeInsets.all(16.0),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  20.0), // Garante que o conteúdo siga a borda
+              borderRadius: BorderRadius.circular(20.0), // Garante que o conteúdo siga a borda
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -113,21 +143,18 @@ class _LoginPageState extends State {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF7FC8F8),
                       padding: EdgeInsets.symmetric(
-                          vertical: 20.0,
-                          horizontal: 40.0), // Aumenta o tamanho do botão
+                          vertical: 20.0, horizontal: 40.0), // Aumenta o tamanho do botão
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            30.0), // Bordas arredondadas no botão
+                        borderRadius: BorderRadius.circular(30.0), // Bordas arredondadas no botão
                       ),
                     ),
                     onPressed: () {
-                      // Implementar lógica de login aqui
+                      login();  // Chama a função de login ao clicar no botão
                     },
                     child: Text('Login',
                         style: TextStyle(
                             fontSize: 18,
-                            color: Color(
-                                0xFF000000))), // Aumenta o tamanho do texto
+                            color: Color(0xFF000000))), // Aumenta o tamanho do texto
                   ),
                   SizedBox(height: 80.0),
                   Text(
