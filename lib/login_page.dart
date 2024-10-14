@@ -13,66 +13,40 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> login() async {
     try {
-      final String baseUrl = 'http://:8000';  // Substitua pelo seu IP real
-// Usando localhost para a web
-      
-      // Primeira requisição para pegar o token CSRF
-      final csrfResponse = await http.get(Uri.parse('$baseUrl/sanctum/csrf-cookie'));
-      print('Status da requisição CSRF: ${csrfResponse.statusCode}'); // Log do status
+      // Substitua pelo seu IP real
+      // Usando localhost para a web
+      final String baseUrl = 'http://localhost:8000/api'; 
 
-      if (csrfResponse.statusCode == 200) {
-        // Extrair o token CSRF
-        String? csrfToken = extractCsrfToken(csrfResponse);
-        print('Token CSRF extraído: $csrfToken');
+      // Pega os valores dos TextFields
+      String login = _loginController.text;
+      String senha = _senhaController.text;
 
-        if (csrfToken != null) {
-          // Pega os valores dos TextFields
-          String login = _loginController.text;
-          String senha = _senhaController.text;
+      if (login == "" || senha == "") return;
 
-          print('Login: $login, Senha: $senha');
+      // Fazer a requisição phttp.l
+      final response = await http.post(
+        Uri.parse('$baseUrl/loginWithToken'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: jsonEncode({
+          'email': login,
+          'password': senha,
+          'device_name': "celularzinho123"
+        }),
+      );
 
-          // Fazer a requisição principal
-          final response = await http.post(
-            Uri.parse('$baseUrl/login'),
-            headers: {
-              'X-XSRF-TOKEN': csrfToken,
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              'login': login,
-              'senha': senha,
-            }),
-          );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-          print('Status da resposta do login: ${response.statusCode}');
-          print('Corpo da resposta do login: ${response.body}');
-
-          if (response.statusCode == 200) {
-            print('Requisição principal bem-sucedida: ${response.body}');
-          } else {
-            print('Erro na requisição principal: ${response.statusCode}');
-          }
-        } else {
-          print('Token CSRF não encontrado.');
-        }
+        print('Requisição principal bem-sucedida toke: ${data.token}');
       } else {
-        print('Erro ao obter o token CSRF: ${csrfResponse.statusCode}');
-        print('Resposta CSRF: ${csrfResponse.body}');
+        print('Erro na requisição principal: ${response.statusCode}');
       }
     } catch (e) {
-      print('Ocorreu um erro: $e'); // Log do erro
+      print('Ocorreu um erro alooooooooooo carai: $e'); // Log do erro
     }
-  }
-
-  // Função para extrair o token CSRF dos cookies ou da resposta
-  String? extractCsrfToken(http.Response response) {
-    final cookies = response.headers['set-cookie'];
-    if (cookies != null && cookies.contains('XSRF-TOKEN')) {
-      final token = RegExp(r'XSRF-TOKEN=([^;]+)').firstMatch(cookies);
-      return token?.group(1);
-    }
-    return null;
   }
 
   @override
@@ -85,7 +59,8 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: Color(0xFC7FC8F8), // Cor de fundo da AppBar
             flexibleSpace: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center, // Centraliza verticalmente
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // Centraliza verticalmente
                 children: [
                   Image.asset(
                     'assets/imagens/logo4aba.png',
@@ -106,7 +81,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             padding: EdgeInsets.all(16.0),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0), // Garante que o conteúdo siga a borda
+              borderRadius: BorderRadius.circular(
+                  20.0), // Garante que o conteúdo siga a borda
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -143,18 +119,21 @@ class _LoginPageState extends State<LoginPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF7FC8F8),
                       padding: EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 40.0), // Aumenta o tamanho do botão
+                          vertical: 20.0,
+                          horizontal: 40.0), // Aumenta o tamanho do botão
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0), // Bordas arredondadas no botão
+                        borderRadius: BorderRadius.circular(
+                            30.0), // Bordas arredondadas no botão
                       ),
                     ),
                     onPressed: () {
-                      login();  // Chama a função de login ao clicar no botão
+                      login(); // Chama a função de login ao clicar no botão
                     },
                     child: Text('Login',
                         style: TextStyle(
                             fontSize: 18,
-                            color: Color(0xFF000000))), // Aumenta o tamanho do texto
+                            color: Color(
+                                0xFF000000))), // Aumenta o tamanho do texto
                   ),
                   SizedBox(height: 80.0),
                   Text(
