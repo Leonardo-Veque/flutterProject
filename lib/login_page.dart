@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:four_aba_project/home.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,12 +11,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
+  
+  String _errorMessage = '';
 
   Future<void> login() async {
     try {
       // Substitua pelo seu IP real
       // Usando localhost para a web
-      final String baseUrl = 'http://localhost:8000/api'; 
+      final String baseUrl = 'http://localhost:8000/api';
 
       // Pega os valores dos TextFields
       String login = _loginController.text;
@@ -36,13 +39,18 @@ class _LoginPageState extends State<LoginPage> {
           'device_name': "celularzinho123"
         }),
       );
-
+      _errorMessage = "";
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        print('Requisição principal bem-sucedida toke: ${data.token}');
+        final token = data["data"];
+        print('Requisição principal bem-sucedida toke: ${token}');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+        
       } else {
         print('Erro na requisição principal: ${response.statusCode}');
+        setState(() {
+        _errorMessage = "email ou senha incorretos";  // Atualiza a mensagem de erro
+        });
       }
     } catch (e) {
       print('Ocorreu um erro alooooooooooo carai: $e'); // Log do erro
@@ -135,6 +143,16 @@ class _LoginPageState extends State<LoginPage> {
                             color: Color(
                                 0xFF000000))), // Aumenta o tamanho do texto
                   ),
+                  
+                  if (_errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Text(
+                        _errorMessage,
+                        style: TextStyle(color: Colors.red,fontSize: 20),
+                      ),
+                    ),
+                  
                   SizedBox(height: 80.0),
                   Text(
                     'Esqueceu a senha clique aqui',
