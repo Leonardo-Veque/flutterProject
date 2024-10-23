@@ -24,8 +24,18 @@ class _LoginPageState extends State<LoginPage> {
       String login = _loginController.text;
       String senha = _senhaController.text;
 
-      if (login == "" || senha == "") return;
-
+      if (login == "" || senha == "") {
+        setState(() {
+          _errorMessage = "Por favor preencher todos os campos.";
+        });
+         Future.delayed(Duration(seconds: 3), () {
+          setState(() {
+            _errorMessage = ""; // Limpa a mensagem de erro
+          });
+        });
+      
+      return;
+      }
       // Fazer a requisição phttp.l
       final response = await http.post(
         Uri.parse('$baseUrl/loginWithToken'),
@@ -47,9 +57,15 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
         
       } else {
-        print('Erro na requisição principal: ${response.statusCode}');
-        setState(() {
-        _errorMessage = "email ou senha incorretos";  // Atualiza a mensagem de erro
+       setState(() {
+          _errorMessage = "email ou senha incorretos"; // Atualiza a mensagem de erro
+        });
+
+        // Remove a mensagem após 5 segundos
+        Future.delayed(Duration(seconds: 3), () {
+          setState(() {
+            _errorMessage = ""; // Limpa a mensagem de erro
+          });
         });
       }
     } catch (e) {

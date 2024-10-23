@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:four_aba_project/cliente.dart';
+import 'package:four_aba_project/testeInfo.dart';
+
 
 class Home extends StatelessWidget {
   @override
@@ -30,14 +33,14 @@ class Home extends StatelessWidget {
           children: [
             SizedBox(height: 20), // Espaço entre os containers
 
-            // TODO pagiina de testes
+
             InkWell(
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TestPage()), // Navega para a página TestPage
+                  MaterialPageRoute(builder: (context) => Testinfo()), // Navega para a página TestPage
                 );
-              },*/
+              },
               child: Container(
                 padding: EdgeInsets.all(16.0),
                 height: 200,
@@ -90,14 +93,13 @@ class Home extends StatelessWidget {
 
             SizedBox(height: 20), // Espaço entre os containers
 
-            // TODO pagina de clientes
             InkWell(
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ClientsPage()), // Navega para a página ClientsPage
+                  MaterialPageRoute(builder: (context) => Cliente()),
                 );
-              },*/
+              },
               child: Container(
                 padding: EdgeInsets.all(16.0),
                 height: 200,
