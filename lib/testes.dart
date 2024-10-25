@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:four_aba_project/home.dart';
 
 class TesteScreen extends StatefulWidget {
   @override
@@ -105,6 +106,10 @@ Future<void> _enviarRespostas() async {
           backgroundColor: Colors.green,
         ),
       );
+
+      await Future.delayed(Duration(seconds: 2));
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Home()),);
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

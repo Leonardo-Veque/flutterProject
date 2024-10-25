@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:four_aba_project/cliente.dart';
 import 'package:four_aba_project/testeInfo.dart';
-
+import 'package:four_aba_project/graficos.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -63,14 +63,13 @@ class Home extends StatelessWidget {
 
             SizedBox(height: 20), // Espaço entre os containers
 
-            // TODO pagina de graficos
             InkWell(
-              /*onTap: () {
+              onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GraphPage()), // Navega para a página GraphPage
+                  MaterialPageRoute(builder: (context) => Grafico()),
                 );
-              },*/
+              },
               child: Container(
                 padding: EdgeInsets.all(16.0),
                 height: 200,
