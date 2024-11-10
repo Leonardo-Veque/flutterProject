@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:four_aba_project/cliente.dart';
-import 'package:four_aba_project/home.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -27,7 +26,6 @@ class ChartPage extends StatefulWidget {
 
 class _ChartPageState extends State<ChartPage> {
   List<LineChartBarData> lineBarsData = [];
-  List<String> descriptions = [];
   DateTime? startDate;
   DateTime? endDate;
   String? selectedClient;
@@ -118,9 +116,7 @@ class _ChartPageState extends State<ChartPage> {
               groupedData[perguntaId]!
                   .add(FlSpot(dataItem.day.toDouble(), resposta));
             }
-            descriptions = groupedData.keys
-                .map((perguntaId) => "Pergunta $perguntaId")
-                .toList();
+
             // Criar uma lista de LineChartBarData para cada pergunta
             List<LineChartBarData> lineBars = [];
 
@@ -159,32 +155,26 @@ class _ChartPageState extends State<ChartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: PreferredSize(
-      preferredSize: Size.fromHeight(100.0),
-      child: AppBar(
-        backgroundColor: Color(0xFC7FC8F8),
-        flexibleSpace: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/imagens/logo4aba.png',
-                height: 100,
-              ),
-            ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100.0), // Define a altura da AppBar
+        child: AppBar(
+          backgroundColor: Color(0xFC7FC8F8), // Cor de fundo da AppBar
+          flexibleSpace: Center(
+            // Centraliza todo o conteúdo da AppBar
+            child: Column(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Centraliza verticalmente
+              children: [
+                Image.asset(
+                  'assets/imagens/logo4aba.png',
+                  height: 100, // Altura da imagem
+                ),
+              ],
+            ),
           ),
+          elevation: 0, // Remove a sombra
         ),
-        leading: BackButton(
-           onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Home()),
-              );
-          },
-        ),
-        elevation: 0,
       ),
-    ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -261,79 +251,43 @@ class _ChartPageState extends State<ChartPage> {
             ),
             SizedBox(height: 16), // Espaço antes do gráfico
             Expanded(
-              child: Stack(
-                children: [
-                  LineChart(
-                    LineChartData(
-                      gridData: FlGridData(show: true), // Mostra a grade
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: false, // Remove os títulos do eixo Y
-                          ),
-                        ),
-                        topTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles:
-                                false, // Remove os títulos do eixo superior
-                          ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 70,
-                            getTitlesWidget: (value, meta) {
-                              return Text(
-                                value.toInt().toString(), // Exibe o dia
-                                style: TextStyle(color: Colors.black),
-                              );
-                            },
-                          ),
-                        ),
+              child: LineChart(
+                LineChartData(
+                  gridData: FlGridData(show: true), // Mostra a grade
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: false, // Remove os títulos do eixo Y
                       ),
-                      borderData: FlBorderData(
-                        show: true,
-                        border: Border(
-                          left: BorderSide(color: Colors.black, width: 1),
-                          bottom: BorderSide(color: Colors.black, width: 1),
-                        ),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: false, // Remove os títulos do eixo superior
                       ),
-                      lineBarsData:
-                          lineBarsData, // Usar a lista de linhas agrupadas
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toInt().toString(), // Exibe o dia
+                            style: TextStyle(color: Colors.black),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                  SizedBox(height: 30),
-                  // Legenda
-                  Positioned(
-                    bottom: 10, // Ajuste a posição conforme necessário
-                    right: 10, // Ajuste a posição conforme necessário
-                    child: Row(
-                      children: List.generate(lineBarsData.length, (index) {
-                        Color color = lineBarsData[index].color ?? Colors.black; // Cor correspondente
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                color: color, // Cor da linha correspondente
-                              ),
-                              SizedBox(width: 4),
-                              Text('Pergunta ${index + 1}',
-                                  style: TextStyle(
-                                      color: Colors
-                                          .black,
-                                           fontSize: 10,
-                                    )
-                                  ), // Descrição da pergunta
-                            ],
-                          ),
-                        );
-                      }),
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border(
+                      left: BorderSide(color: Colors.black, width: 1),
+                      bottom: BorderSide(color: Colors.black, width: 1),
                     ),
                   ),
-                ],
+                  lineBarsData:
+                      lineBarsData, // Usar a lista de linhas agrupadas
+                ),
               ),
             ),
           ],

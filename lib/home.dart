@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:four_aba_project/cliente.dart';
+import 'package:four_aba_project/login_page.dart';
 import 'package:four_aba_project/testeInfo.dart';
 import 'package:four_aba_project/graficos.dart';
 
@@ -24,21 +25,31 @@ class Home extends StatelessWidget {
               ],
             ),
           ),
+          leading: BackButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
+          ),
           elevation: 0, // Remove a sombra
         ),
       ),
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Ajusta o tamanho do Column para o conteúdo
+          mainAxisSize:
+              MainAxisSize.min, // Ajusta o tamanho do Column para o conteúdo
           children: [
             SizedBox(height: 20), // Espaço entre os containers
-
 
             InkWell(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Testinfo()), // Navega para a página TestPage
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Testinfo()), // Navega para a página TestPage
                 );
               },
               child: Container(

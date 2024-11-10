@@ -18,7 +18,7 @@ class _TesteScreenState extends State<TesteScreen> {
   List<dynamic> perguntas = [];
   Map<int, String> respostas = {}; // Armazena as respostas do usuário
   bool carregando = true;
-
+  Map<int, int> botoesSelecionados = {};
   @override
   void initState() {
     super.initState();
@@ -108,7 +108,7 @@ Future<void> _enviarRespostas() async {
       );
 
       await Future.delayed(Duration(seconds: 2));
-      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Home()),);
+      Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),);
 
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -157,35 +157,56 @@ Widget build(BuildContext context) {
               children: [
                 Expanded(
                   child: ListView.builder(
-                    itemCount: perguntas.length,
-                    itemBuilder: (context, index) {
-                      final pergunta = perguntas[index];
+                  itemCount: perguntas.length,
+                  itemBuilder: (context, index) {
+                    final pergunta = perguntas[index];
+                    final id = pergunta['id'] ?? -1;
+                    final descricao = pergunta['descricao'] ?? 'Descrição não disponível';
 
-                      // Acesso seguro aos campos
-                      final id = pergunta['id'] ?? -1; 
-                      final descricao = pergunta['descricao'] ?? 'Descrição não disponível'; 
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          descricao,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: List.generate(4, (botaoIndex) {
+                            // Valores para cada botão
+                            final valoresBotao = ['1', '5', '7', '10'];
+                            final val = valoresBotao[botaoIndex];
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            descricao,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(labelText: 'Sua resposta'),
-                            onChanged: (value) {
-                              respostas[id] = value;
-                            },
-                          ),
-                          SizedBox(height: 16),
-                        ],
-                      );
-                    },
-                  ),
+                            return Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      botoesSelecionados[id] = botaoIndex;
+                                      respostas[id] = val;
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: botoesSelecionados[id] == botaoIndex
+                                        ? Color(0xFC7FC8F8) // Cor quando o botão está selecionado
+                                        : Colors.white, // Cor original quando não selecionado
+                                    
+                                  ),
+                                  child: Text(val,style: TextStyle(color: Colors.black),),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        SizedBox(height: 16),
+                      ],
+                    );
+                  },
+                ),
                 ),
               ],
             ),

@@ -11,10 +11,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  
-  String _errorMessage = '';
+  bool carregando = false;
 
   Future<void> login() async {
+    setState(() {
+      carregando = true;
+    });
     try {
       // Substitua pelo seu IP real
       // Usando localhost para a web
@@ -26,15 +28,15 @@ class _LoginPageState extends State<LoginPage> {
 
       if (login == "" || senha == "") {
         setState(() {
-          _errorMessage = "Por favor preencher todos os campos.";
-        });
-         Future.delayed(Duration(seconds: 3), () {
-          setState(() {
-            _errorMessage = ""; // Limpa a mensagem de erro
-          });
-        });
-      
-      return;
+          carregando = false;
+        });     
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Por favor preencher todos os campos.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
       }
       // Fazer a requisição phttp.l
       final response = await http.post(
@@ -49,26 +51,33 @@ class _LoginPageState extends State<LoginPage> {
           'device_name': "celularzinho123"
         }),
       );
-      _errorMessage = "";
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final token = data["data"];
         print('Requisição principal bem-sucedida toke: ${token}');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-        
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Home()));
       } else {
-       setState(() {
-          _errorMessage = "email ou senha incorretos"; // Atualiza a mensagem de erro
+        setState(() {
+          carregando = false;
         });
-
-        // Remove a mensagem após 5 segundos
-        Future.delayed(Duration(seconds: 3), () {
-          setState(() {
-            _errorMessage = ""; // Limpa a mensagem de erro
-          });
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('email ou senha incorretos'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
+      setState(() {
+        carregando = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('erro ao logar'),
+            backgroundColor: Colors.red,
+          ),
+        );
       print('Ocorreu um erro alooooooooooo carai: $e'); // Log do erro
     }
   }
@@ -80,6 +89,7 @@ class _LoginPageState extends State<LoginPage> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(300.0), // Define a altura da AppBar
           child: AppBar(
+            leading: Container(), 
             backgroundColor: Color(0xFC7FC8F8), // Cor de fundo da AppBar
             flexibleSpace: Center(
               child: Column(
@@ -143,32 +153,33 @@ class _LoginPageState extends State<LoginPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF7FC8F8),
                       padding: EdgeInsets.symmetric(
-                          vertical: 20.0,
-                          horizontal: 40.0), // Aumenta o tamanho do botão
+                        vertical: 20.0,
+                        horizontal: 40.0,
+                      ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            30.0), // Bordas arredondadas no botão
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    onPressed: () {
-                      login(); // Chama a função de login ao clicar no botão
+                    onPressed: carregando ? null : () {
+                      login();
                     },
-                    child: Text('Login',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Color(
-                                0xFF000000))), // Aumenta o tamanho do texto
+                    child: carregando
+                        ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                        : Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Color(0xFF000000),
+                            ),
+                          ),
                   ),
-                  
-                  if (_errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Text(
-                        _errorMessage,
-                        style: TextStyle(color: Colors.red,fontSize: 20),
-                      ),
-                    ),
-                  
                   SizedBox(height: 80.0),
                   Text(
                     'Esqueceu a senha clique aqui',
